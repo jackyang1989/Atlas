@@ -7,7 +7,7 @@ import logging
 from app.config import settings
 from app.database import engine, Base, SessionLocal
 from app import models
-from app.api import auth, health
+from app.api import auth, health, services
 from app.services.auth_service import AuthService
 
 logging.basicConfig(level=logging.INFO)
