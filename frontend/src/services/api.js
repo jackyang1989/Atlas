@@ -35,7 +35,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Auth 相关接口
+// ==================== Auth 相关接口 ====================
 export const authAPI = {
   login: (username, password) =>
     apiClient.post('/api/auth/login', { username, password }),
@@ -50,31 +50,38 @@ export const authAPI = {
     }),
 };
 
-// Monitor/System 相关接口 (修复：合并 systemAPI)
+// ==================== Monitor/System 相关接口 ====================
 export const monitorAPI = {
+  // 健康检查（无需认证）
   healthCheck: () =>
-    apiClient.get('/api/monitor/health'),  // 无需认证的健康检查
+    apiClient.get('/api/monitor/health'),
   
+  // 仪表盘数据（完整系统状态）
   dashboard: () =>
-    apiClient.get('/api/monitor/dashboard'),  // 完整仪表盘数据
+    apiClient.get('/api/monitor/dashboard'),
   
+  // 系统统计
   stats: () =>
-    apiClient.get('/api/monitor/system'),  // 系统统计
+    apiClient.get('/api/monitor/system'),
   
+  // CPU 统计
   cpu: () =>
     apiClient.get('/api/monitor/cpu'),
   
+  // 内存统计
   memory: () =>
     apiClient.get('/api/monitor/memory'),
   
+  // 磁盘统计
   disk: () =>
     apiClient.get('/api/monitor/disk'),
   
+  // 网络统计
   network: () =>
     apiClient.get('/api/monitor/network'),
 };
 
-// Services 相关接口
+// ==================== Services (VPN 服务) 相关接口 ====================
 export const servicesAPI = {
   list: (skip = 0, limit = 10) =>
     apiClient.get('/api/services/', { params: { skip, limit } }),
@@ -95,7 +102,7 @@ export const servicesAPI = {
     apiClient.delete(`/api/services/${serviceId}`),
 };
 
-// Users 相关接口
+// ==================== Users (用户) 相关接口 ====================
 export const usersAPI = {
   list: (skip = 0, limit = 10, status = null) =>
     apiClient.get('/api/users/', { params: { skip, limit, status_filter: status } }),
@@ -131,7 +138,7 @@ export const usersAPI = {
     apiClient.delete(`/api/users/${userId}`),
 };
 
-// Domains 相关接口
+// ==================== Domains (域名) 相关接口 ====================
 export const domainsAPI = {
   list: (skip = 0, limit = 10) =>
     apiClient.get('/api/domains/', { params: { skip, limit } }),
@@ -148,14 +155,13 @@ export const domainsAPI = {
   delete: (domainId) =>
     apiClient.delete(`/api/domains/${domainId}`),
   
-  status: () =>
-    apiClient.get('/api/domains/status/all'),  // 获取统计
-  
+  // ✅ 修复：移除重复的 status() 方法
+  // 使用统一的 stats() 方法获取统计信息
   stats: () =>
-    apiClient.get('/api/domains/status/all'),  // 别名
+    apiClient.get('/api/domains/status/all'),
 };
 
-// Components 相关接口
+// ==================== Components (组件) 相关接口 ====================
 export const componentsAPI = {
   list: (skip = 0, limit = 10, typeFilter = null) =>
     apiClient.get('/api/components/', { params: { skip, limit, type_filter: typeFilter } }),
@@ -185,7 +191,7 @@ export const componentsAPI = {
     apiClient.delete(`/api/components/${componentId}`),
 };
 
-// Backups 相关接口
+// ==================== Backups (备份) 相关接口 ====================
 export const backupsAPI = {
   list: () =>
     apiClient.get('/api/backups/'),
@@ -210,14 +216,17 @@ export const backupsAPI = {
     apiClient.post('/api/backups/cleanup', null, { params: { days } }),
 };
 
-// Alerts 相关接口
+// ==================== Alerts (告警) 相关接口 ====================
 export const alertsAPI = {
+  // 发送测试告警邮件
   test: (email) =>
     apiClient.post('/api/alerts/test', { email }),
   
+  // 发送告警
   send: (type, params, recipients) =>
     apiClient.post('/api/alerts/send', { type, params, recipients }),
   
+  // 获取告警配置
   getConfig: () =>
     apiClient.get('/api/alerts/config'),
 };
