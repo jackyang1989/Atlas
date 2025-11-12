@@ -50,13 +50,28 @@ export const authAPI = {
     }),
 };
 
-// 系统相关接口
-export const systemAPI = {
-  health: () =>
-    apiClient.get('/health'),
+// Monitor/System 相关接口 (修复：合并 systemAPI)
+export const monitorAPI = {
+  healthCheck: () =>
+    apiClient.get('/api/monitor/health'),  // 无需认证的健康检查
+  
+  dashboard: () =>
+    apiClient.get('/api/monitor/dashboard'),  // 完整仪表盘数据
   
   stats: () =>
-    apiClient.get('/api/monitor/stats'),
+    apiClient.get('/api/monitor/system'),  // 系统统计
+  
+  cpu: () =>
+    apiClient.get('/api/monitor/cpu'),
+  
+  memory: () =>
+    apiClient.get('/api/monitor/memory'),
+  
+  disk: () =>
+    apiClient.get('/api/monitor/disk'),
+  
+  network: () =>
+    apiClient.get('/api/monitor/network'),
 };
 
 // Services 相关接口
@@ -83,7 +98,7 @@ export const servicesAPI = {
 // Users 相关接口
 export const usersAPI = {
   list: (skip = 0, limit = 10, status = null) =>
-    apiClient.get('/api/users/', { params: { skip, limit, status } }),
+    apiClient.get('/api/users/', { params: { skip, limit, status_filter: status } }),
   
   create: (data) =>
     apiClient.post('/api/users/', data),
@@ -95,7 +110,7 @@ export const usersAPI = {
     apiClient.put(`/api/users/${userId}`, data),
   
   addTraffic: (userId, amount) =>
-    apiClient.post(`/api/users/${userId}/traffic`, { amount_gb: amount }),
+    apiClient.post(`/api/users/${userId}/traffic`, { traffic_gb: amount }),
   
   resetTraffic: (userId) =>
     apiClient.post(`/api/users/${userId}/traffic/reset`),
@@ -116,30 +131,6 @@ export const usersAPI = {
     apiClient.delete(`/api/users/${userId}`),
 };
 
-// Monitor 相关接口
-export const monitorAPI = {
-  stats: () =>
-    apiClient.get('/api/monitor/stats'),
-  
-  cpu: () =>
-    apiClient.get('/api/monitor/cpu'),
-  
-  memory: () =>
-    apiClient.get('/api/monitor/memory'),
-  
-  disk: () =>
-    apiClient.get('/api/monitor/disk'),
-  
-  network: () =>
-    apiClient.get('/api/monitor/network'),
-  
-  processes: () =>
-    apiClient.get('/api/monitor/processes'),
-  
-  healthCheck: () =>
-    apiClient.get('/api/monitor/health'),
-};
-
 // Domains 相关接口
 export const domainsAPI = {
   list: (skip = 0, limit = 10) =>
@@ -157,14 +148,11 @@ export const domainsAPI = {
   delete: (domainId) =>
     apiClient.delete(`/api/domains/${domainId}`),
   
-  renew: (domainId) =>
-    apiClient.post(`/api/domains/${domainId}/renew`),
-  
-  checkExpiry: (domainId) =>
-    apiClient.get(`/api/domains/${domainId}/check-expiry`),
+  status: () =>
+    apiClient.get('/api/domains/status/all'),  // 获取统计
   
   stats: () =>
-    apiClient.get('/api/domains/stats'),
+    apiClient.get('/api/domains/status/all'),  // 别名
 };
 
 // Components 相关接口
