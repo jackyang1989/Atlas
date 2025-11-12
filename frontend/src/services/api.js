@@ -35,7 +35,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-// ==================== Auth 认证接口 ====================
+// Auth 相关接口
 export const authAPI = {
   login: (username, password) =>
     apiClient.post('/api/auth/login', { username, password }),
@@ -50,7 +50,16 @@ export const authAPI = {
     }),
 };
 
-// ==================== Services 服务管理接口 ====================
+// 系统相关接口
+export const systemAPI = {
+  health: () =>
+    apiClient.get('/health'),
+  
+  stats: () =>
+    apiClient.get('/api/monitor/stats'),
+};
+
+// Services 相关接口
 export const servicesAPI = {
   list: (skip = 0, limit = 10) =>
     apiClient.get('/api/services/', { params: { skip, limit } }),
@@ -71,15 +80,10 @@ export const servicesAPI = {
     apiClient.delete(`/api/services/${serviceId}`),
 };
 
-// ==================== Users 用户管理接口 ====================
+// Users 相关接口
 export const usersAPI = {
-  list: (skip = 0, limit = 10, statusFilter = null) => {
-    const params = { skip, limit };
-    if (statusFilter) {
-      params.status_filter = statusFilter;
-    }
-    return apiClient.get('/api/users/', { params });
-  },
+  list: (skip = 0, limit = 10, status = null) =>
+    apiClient.get('/api/users/', { params: { skip, limit, status } }),
   
   create: (data) =>
     apiClient.post('/api/users/', data),
@@ -90,8 +94,8 @@ export const usersAPI = {
   update: (userId, data) =>
     apiClient.put(`/api/users/${userId}`, data),
   
-  addTraffic: (userId, trafficGb) =>
-    apiClient.post(`/api/users/${userId}/traffic`, { traffic_gb: trafficGb }),
+  addTraffic: (userId, amount) =>
+    apiClient.post(`/api/users/${userId}/traffic`, { amount_gb: amount }),
   
   resetTraffic: (userId) =>
     apiClient.post(`/api/users/${userId}/traffic/reset`),
@@ -112,13 +116,122 @@ export const usersAPI = {
     apiClient.delete(`/api/users/${userId}`),
 };
 
-// ==================== System 系统接口 ====================
-export const systemAPI = {
-  health: () =>
-    apiClient.get('/health'),
+// Monitor 相关接口
+export const monitorAPI = {
+  stats: () =>
+    apiClient.get('/api/monitor/stats'),
+  
+  cpu: () =>
+    apiClient.get('/api/monitor/cpu'),
+  
+  memory: () =>
+    apiClient.get('/api/monitor/memory'),
+  
+  disk: () =>
+    apiClient.get('/api/monitor/disk'),
+  
+  network: () =>
+    apiClient.get('/api/monitor/network'),
+  
+  processes: () =>
+    apiClient.get('/api/monitor/processes'),
+  
+  healthCheck: () =>
+    apiClient.get('/api/monitor/health'),
+};
+
+// Domains 相关接口
+export const domainsAPI = {
+  list: (skip = 0, limit = 10) =>
+    apiClient.get('/api/domains/', { params: { skip, limit } }),
+  
+  create: (data) =>
+    apiClient.post('/api/domains/', data),
+  
+  get: (domainId) =>
+    apiClient.get(`/api/domains/${domainId}`),
+  
+  update: (domainId, data) =>
+    apiClient.put(`/api/domains/${domainId}`, data),
+  
+  delete: (domainId) =>
+    apiClient.delete(`/api/domains/${domainId}`),
+  
+  renew: (domainId) =>
+    apiClient.post(`/api/domains/${domainId}/renew`),
+  
+  checkExpiry: (domainId) =>
+    apiClient.get(`/api/domains/${domainId}/check-expiry`),
   
   stats: () =>
-    apiClient.get('/api/system/stats'),
+    apiClient.get('/api/domains/stats'),
+};
+
+// Components 相关接口
+export const componentsAPI = {
+  list: (skip = 0, limit = 10, typeFilter = null) =>
+    apiClient.get('/api/components/', { params: { skip, limit, type_filter: typeFilter } }),
+  
+  create: (data) =>
+    apiClient.post('/api/components/', data),
+  
+  get: (componentId) =>
+    apiClient.get(`/api/components/${componentId}`),
+  
+  update: (componentId, data) =>
+    apiClient.put(`/api/components/${componentId}`, data),
+  
+  install: (componentId, force = false) =>
+    apiClient.post(`/api/components/${componentId}/install`, { force }),
+  
+  uninstall: (componentId) =>
+    apiClient.post(`/api/components/${componentId}/uninstall`),
+  
+  checkUpdate: (componentId) =>
+    apiClient.get(`/api/components/${componentId}/check-update`),
+  
+  upgrade: (componentId) =>
+    apiClient.post(`/api/components/${componentId}/upgrade`),
+  
+  delete: (componentId) =>
+    apiClient.delete(`/api/components/${componentId}`),
+};
+
+// Backups 相关接口
+export const backupsAPI = {
+  list: () =>
+    apiClient.get('/api/backups/'),
+  
+  create: (includeData = true, includeConfig = true, description = null) =>
+    apiClient.post('/api/backups/', {
+      include_data: includeData,
+      include_config: includeConfig,
+      description,
+    }),
+  
+  restore: (filename, force = false) =>
+    apiClient.post('/api/backups/restore', { filename, force }),
+  
+  download: (filename) =>
+    apiClient.get(`/api/backups/download/${filename}`, { responseType: 'blob' }),
+  
+  delete: (filename) =>
+    apiClient.delete(`/api/backups/${filename}`),
+  
+  cleanup: (days = 30) =>
+    apiClient.post('/api/backups/cleanup', null, { params: { days } }),
+};
+
+// Alerts 相关接口
+export const alertsAPI = {
+  test: (email) =>
+    apiClient.post('/api/alerts/test', { email }),
+  
+  send: (type, params, recipients) =>
+    apiClient.post('/api/alerts/send', { type, params, recipients }),
+  
+  getConfig: () =>
+    apiClient.get('/api/alerts/config'),
 };
 
 export default apiClient;
