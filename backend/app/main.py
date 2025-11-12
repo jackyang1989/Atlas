@@ -20,10 +20,17 @@ from app.api import auth, health, services, users, monitor, domains, components,
 async def lifespan(app: FastAPI):
     # 启动事件
     logger.info("🚀 ATLAS 启动中...")
+    
+    # 1. 创建数据库表
     Base.metadata.create_all(bind=engine)
     logger.info("✅ 数据库初始化完成")
     
-    # 创建默认管理员
+    # 2. 初始化备份服务
+    from app.services.backup_service import init_backup_service
+    init_backup_service()
+    logger.info("✅ 备份服务初始化完成")
+    
+    # 3. 创建默认管理员
     from app.services.auth_service import AuthService
     db = SessionLocal()
     try:
@@ -31,10 +38,11 @@ async def lifespan(app: FastAPI):
     finally:
         db.close()
     
+    logger.info("✅ 应用启动完成")
     yield
     
     # 关闭事件
-    logger.info("👋 ATLAS 关闭")
+    logger.info("👋 ATLAS 关闭中...")
 
 
 app = FastAPI(
@@ -80,6 +88,15 @@ async def root():
         "version": settings.PROJECT_VERSION,
         "status": "running",
         "docs": "/docs"
+    }
+
+
+@app.get("/health")
+async def health_check():
+    """系统健康检查（无需认证）"""
+    return {
+        "status": "ok",
+        "service": "atlas"
     }
 
 
