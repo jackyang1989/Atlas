@@ -35,7 +35,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Auth 相关接口
+// ==================== Auth 认证接口 ====================
 export const authAPI = {
   login: (username, password) =>
     apiClient.post('/api/auth/login', { username, password }),
@@ -50,7 +50,28 @@ export const authAPI = {
     }),
 };
 
-// 系统相关接口
+// ==================== Services 服务管理接口 ====================
+export const servicesAPI = {
+  list: (skip = 0, limit = 10) =>
+    apiClient.get('/api/services/', { params: { skip, limit } }),
+  
+  create: (data) =>
+    apiClient.post('/api/services/', data),
+  
+  get: (serviceId) =>
+    apiClient.get(`/api/services/${serviceId}`),
+  
+  update: (serviceId, data) =>
+    apiClient.put(`/api/services/${serviceId}`, data),
+  
+  toggle: (serviceId) =>
+    apiClient.put(`/api/services/${serviceId}/toggle`),
+  
+  delete: (serviceId) =>
+    apiClient.delete(`/api/services/${serviceId}`),
+};
+
+// ==================== System 系统接口 ====================
 export const systemAPI = {
   health: () =>
     apiClient.get('/health'),
