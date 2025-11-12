@@ -1,0 +1,24 @@
+.logo {
+  padding: 16px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  border-bottom: 1px solid #30363d;
+}
+
+.logo h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.layout-trigger {
+  margin: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.layout-trigger:hover {
+  color: #1890ff;
+}
