@@ -21,7 +21,6 @@ import {
   DeleteOutlined,
   PlayCircleOutlined,
   PauseCircleOutlined,
-  CopyOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
 import { servicesAPI } from '../services/api';
@@ -172,13 +171,14 @@ export default function Services() {
       key: 'cert_domain',
       width: 150,
       ellipsis: true,
+      render: (domain) => domain || '-',
     },
     {
       title: '创建时间',
       dataIndex: 'created_at',
       key: 'created_at',
       width: 180,
-      render: (date) => new Date(date).toLocaleString(),
+      render: (date) => new Date(date).toLocaleString('zh-CN'),
     },
     {
       title: '操作',
@@ -190,6 +190,7 @@ export default function Services() {
           <Tooltip title={record.status === 'running' ? '停止' : '启动'}>
             <Button
               size="small"
+              type={record.status === 'running' ? 'primary' : 'default'}
               icon={
                 record.status === 'running' ? (
                   <PauseCircleOutlined />
@@ -260,6 +261,7 @@ export default function Services() {
             pageSize: pagination.pageSize,
             total: total,
             showSizeChanger: true,
+            pageSizeOptions: ['10', '20', '50'],
             showTotal: (total) => `共 ${total} 个服务`,
             onChange: (page, pageSize) => {
               setPagination({ current: page, pageSize });
@@ -316,7 +318,10 @@ export default function Services() {
             label="监听端口"
             rules={[
               { required: true, message: '请输入端口' },
-              { type: 'number', min: 1, max: 65535, message: '端口范围 1-65535' },
+              { 
+                pattern: /^[0-9]+$/, 
+                message: '端口必须是数字' 
+              },
             ]}
           >
             <InputNumber
