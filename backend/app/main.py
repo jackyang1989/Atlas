@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # 导入路由
-from app.api import auth, health, services, users
+from app.api import auth, health, services, users, monitor, domains
 
 
 @asynccontextmanager
@@ -59,6 +59,8 @@ app.include_router(health.router, tags=["Health"])
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(services.router, prefix="/api/services", tags=["Services"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
+app.include_router(monitor.router, prefix="/api/monitor", tags=["Monitor"])
+app.include_router(domains.router, prefix="/api/domains", tags=["Domains"])
 
 
 if __name__ == "__main__":
