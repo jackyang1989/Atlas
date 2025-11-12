@@ -1,0 +1,44 @@
+# 多阶段构建 - 前端优化
+FROM node:18-alpine as builder
+
+WORKDIR /app
+
+# 复制 package 文件
+COPY package.json package-lock.json ./
+
+# 安装依赖
+RUN npm ci
+
+# 复制源代码
+COPY . .
+
+# 构建生产包
+RUN npm run build
+
+
+# 生产服务器
+FROM node:18-alpine
+
+WORKDIR /app
+
+# 安装 http-server 或 nginx
+RUN npm install -g serve
+
+# 从 builder 复制构建结果
+COPY --from=builder /app/dist ./dist
+
+# 非 root 用户
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
+
+USER nextjs
+
+# 暴露端口
+EXPOSE 3000
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
+
+# 启动应用
+CMD ["serve", "-s", "dist", "-l", "3000"]
