@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 # 导入所有路由
 from app.api import auth, health, services, users, monitor, domains, components, backups, alerts
+from app.api import rbac  # ✨ 新增：导入 RBAC 路由
 
 
 @asynccontextmanager
@@ -30,7 +31,17 @@ async def lifespan(app: FastAPI):
     init_backup_service()
     logger.info("✅ 备份服务初始化完成")
     
-    # 3. 创建默认管理员
+    # 3. ✨ 初始化 RBAC 系统
+    from app.services.rbac_service import RBACService
+    db = SessionLocal()
+    try:
+        RBACService.init_permissions(db)
+        RBACService.init_roles(db)
+        logger.info("✅ RBAC 权限系统已初始化")
+    finally:
+        db.close()
+    
+    # 4. 创建默认管理员
     from app.services.auth_service import AuthService
     db = SessionLocal()
     try:
@@ -38,7 +49,7 @@ async def lifespan(app: FastAPI):
     finally:
         db.close()
     
-    # 4. 注册和启动定时任务
+    # 5. 注册和启动定时任务
     from app.tasks.scheduled_tasks import register_scheduled_tasks, start_scheduler
     db_factory = SessionLocal
     register_scheduled_tasks(db_factory)
@@ -72,7 +83,7 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost",
-        "https://your-domain.com"  # 生产域名
+        "https://your-domain.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -82,6 +93,7 @@ app.add_middleware(
 # 注册路由
 app.include_router(health.router, tags=["Health"])
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
+app.include_router(rbac.router, prefix="/api/rbac", tags=["RBAC"])  # ✨ 新增：RBAC 路由
 app.include_router(services.router, prefix="/api/services", tags=["Services"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(monitor.router, prefix="/api/monitor", tags=["Monitor"])
