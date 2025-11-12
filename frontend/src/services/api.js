@@ -71,6 +71,47 @@ export const servicesAPI = {
     apiClient.delete(`/api/services/${serviceId}`),
 };
 
+// ==================== Users 用户管理接口 ====================
+export const usersAPI = {
+  list: (skip = 0, limit = 10, statusFilter = null) => {
+    const params = { skip, limit };
+    if (statusFilter) {
+      params.status_filter = statusFilter;
+    }
+    return apiClient.get('/api/users/', { params });
+  },
+  
+  create: (data) =>
+    apiClient.post('/api/users/', data),
+  
+  get: (userId) =>
+    apiClient.get(`/api/users/${userId}`),
+  
+  update: (userId, data) =>
+    apiClient.put(`/api/users/${userId}`, data),
+  
+  addTraffic: (userId, trafficGb) =>
+    apiClient.post(`/api/users/${userId}/traffic`, { traffic_gb: trafficGb }),
+  
+  resetTraffic: (userId) =>
+    apiClient.post(`/api/users/${userId}/traffic/reset`),
+  
+  setServices: (userId, serviceIds) =>
+    apiClient.put(`/api/users/${userId}/services`, { service_ids: serviceIds }),
+  
+  enable: (userId) =>
+    apiClient.post(`/api/users/${userId}/enable`),
+  
+  disable: (userId) =>
+    apiClient.post(`/api/users/${userId}/disable`),
+  
+  getConfig: (userId) =>
+    apiClient.get(`/api/users/${userId}/config`),
+  
+  delete: (userId) =>
+    apiClient.delete(`/api/users/${userId}`),
+};
+
 // ==================== System 系统接口 ====================
 export const systemAPI = {
   health: () =>
