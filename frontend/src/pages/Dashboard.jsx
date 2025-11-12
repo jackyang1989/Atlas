@@ -16,12 +16,11 @@ import {
   ServerOutlined,
   UserOutlined,
   DatabaseOutlined,
-  ThunderboltOutlined,
   CloudOutlined,
   CheckCircleOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
-import { systemAPI } from '../services/api';
+import { monitorAPI } from '../services/api';
 import '../styles/Dashboard.css';
 
 export default function Dashboard() {
@@ -37,12 +36,12 @@ export default function Dashboard() {
 
   const fetchStats = async () => {
     try {
-      // 获取完整仪表盘数据
-      const response = await systemAPI.stats();
+      // 获取仪表盘数据 (修复：使用 monitorAPI.dashboard)
+      const response = await monitorAPI.dashboard();
       setStats(response.data);
       
       // 获取健康检查信息
-      const healthResponse = await systemAPI.health();
+      const healthResponse = await monitorAPI.healthCheck();
       setHealth(healthResponse.data);
     } catch (error) {
       message.error('获取系统信息失败');
