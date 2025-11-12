@@ -62,6 +62,7 @@ function App() {
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/services" element={<Services />} />  {/* 添加这一行 */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Route>
 
