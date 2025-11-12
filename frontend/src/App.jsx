@@ -4,6 +4,7 @@ import { Spin } from 'antd';
 import { authAPI } from './services/api';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import MainLayout from './components/Layout';
+import Services from './pages/Services';
 
 // 页面组件
 import Login from './pages/Login';
