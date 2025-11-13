@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 from app.api import auth, health, services, users, monitor, domains, components, backups, alerts
 from app.api import rbac  # ✨ RBAC 路由
 from app.api import webhooks  # ✨ Webhook 路由
+from app.api import certificates  # ✨ 证书管理路由
 
 
 @asynccontextmanager
